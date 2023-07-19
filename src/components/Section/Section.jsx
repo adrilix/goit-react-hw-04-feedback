@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { SectionStyled } from './SectionStyled';
 
 const Section = ({ title, children}) => {
-    console.log(children);
+    // console.log(children);
     return(
         <SectionStyled>
             <h2> {title} </h2>
@@ -13,7 +13,7 @@ const Section = ({ title, children}) => {
 
 Section.propTypes = {
     title: PropTypes.string,
-    children: PropTypes.any.isRequired,
+    children: PropTypes.node.isRequired,
 }
 
 export default Section;

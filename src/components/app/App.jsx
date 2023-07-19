@@ -1,58 +1,69 @@
-import React from 'react';
+import { useState } from 'react';
 
 import Section from '../Section';
 import FeedbackOptions from 'components/FeedbackOptions';
 import Statistics from 'components/Statistics';
 import Notification from '../Notification';
 
-export class App extends React.Component {
+export function App() {
 
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  const options = { good, neutral, bad };
+
+  function leaveFeedback(options)  {
+    switch (options) {
+      case 'good':
+        setGood(good => good + 1);
+        break;
+      case 'neutral':
+        setNeutral(neutral => neutral + 1);
+        break;
+      case 'bad':
+        setBad(bad => bad + 1);
+        break;
+      default: ;
+    }
   };
 
-  leaveFeedback = feedbackName => {
-    this.setState(prevState => ({
-      [feedbackName]: prevState[feedbackName] + 1,
-    }));
-  };
+  function totalCount() {
+    const total = Object.values(options).reduce((acc, option) => {
+      return acc + option;
+    }, 0);
+    return total;
+  }
 
-  total = () => {
-    return this.state.good + this.state.neutral + this.state.bad;
-  };
-
-  positivePercentage = () =>
-    this.state.good === 0
+  function positivePercentage() {
+    return (good === 0)
       ? 0
-      : Math.ceil((this.state.good / this.total()) * 100);
+      : Math.ceil((good / totalCount()) * 100);
+  }
 
-  render() {
-    const options = Object.keys(this.state);
-    return (
+  return (
+    
       <>
         <Section title="Please leave feedback">
-          <FeedbackOptions options={options} leaveFeedback={this.leaveFeedback} />
+          <FeedbackOptions options={options} leaveFeedback={leaveFeedback} />
         </Section>
 
-        {(this.total() === 0) 
-        ? (<Section>
+        {(totalCount(options) === 0)
+          ? (<Section>
             <Notification message="There is no feedback"></Notification>{' '}
           </Section>)
-        : ( <Section title="Statistics">
+          : (<Section title="Statistics">
             <Statistics
-              good={this.state.good}
-              neutral={this.state.neutral}
-              bad={this.state.bad}
-              total={this.total()}
-              positivePercentage={this.positivePercentage()}
+              good={good}
+              neutral={neutral}
+              bad={bad}
+              total={totalCount(options)}
+              positivePercentage={positivePercentage(options)}
             ></Statistics>
           </Section>
-        )}
+          )}
       </>
     );
-  }
 }
 
 export default App;
